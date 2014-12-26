@@ -48,10 +48,10 @@ class PlayScene: SKScene, SKPhysicsContactDelegate {
         self.heroBaseline = self.runningBar.position.y + (self.runningBar.size.height)
         
         //self.hero.position = CGPointMake(10,10)
-        self.hero.position = CGPointMake(CGRectGetMinX(self.frame) + self.hero.size.width + (self.hero.size.width / 4), self.heroBaseline)
+        self.hero.position = CGPointMake((CGRectGetMinX(self.frame) + runningBar.size.height), 0)
         
         //Got this code online :/ , Should make the hero a "Phsycal Body" for interaction with blocks later
-        self.hero.physicsBody = SKPhysicsBody(circleOfRadius: CGFloat(self.hero.size.width / 2))
+       // self.hero.physicsBody = SKPhysicsBody(circleOfRadius: CGFloat(self.hero.size.width / 2))
         
         //Debug settings
         self.debug.fontSize = 18
