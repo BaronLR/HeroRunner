@@ -114,6 +114,7 @@ class PlayScene: SKScene, SKPhysicsContactDelegate {
         }
         else
         {
+            //WOK
             
             if hero.position.y < heroBaseline
             {
