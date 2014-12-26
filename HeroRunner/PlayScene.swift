@@ -15,7 +15,7 @@ class PlayScene: SKScene, SKPhysicsContactDelegate {
     var onGround = true
     var velocityY = CGFloat(0)
     let gravity = CGFloat(0.6)
-    
+    var Falling = false
     var blockMaxX = CGFloat(0)
 
     var score = 0
@@ -45,10 +45,10 @@ class PlayScene: SKScene, SKPhysicsContactDelegate {
         self.maxBarX *= -1
         
         //This sets the reset position for the hero. The ground level.
-        self.heroBaseline = self.runningBar.position.y + (self.runningBar.size.height)
+        self.heroBaseline = self.runningBar.position.y + (self.runningBar.size.height)/2
         
         //self.hero.position = CGPointMake(10,10)
-        self.hero.position = CGPointMake((CGRectGetMinX(self.frame) + runningBar.size.height), 0)
+       self.hero.position = CGPointMake((CGRectGetMinX(self.frame) + runningBar.size.height), heroBaseline)
         
         //Got this code online :/ , Should make the hero a "Phsycal Body" for interaction with blocks later
        // self.hero.physicsBody = SKPhysicsBody(circleOfRadius: CGFloat(self.hero.size.width / 2))
@@ -78,60 +78,56 @@ class PlayScene: SKScene, SKPhysicsContactDelegate {
     {
  //----> An Override Function the checks when you touch the screen. When you do, it makes the velocity 
  //----> get higher and sets it so you are no longer on the ground
-        if self.onGround
-        {
-            self.velocityY = 18.0
-            self.onGround = false
-        }
+     velocityY = -6.0
+     onGround = false
+    
+        
     }
     
     override func touchesEnded(touches: NSSet, withEvent event: UIEvent) {
         //----> When you stop touching... You start falling
+      velocityY = 5
+   
+         // self.onGround = false //Your velocity will fall my 9 until you reach the ground
+       
+          //  self.hero.position.y = self.heroBaseline  + hero.size.height//he is moved back
         
-         self.velocityY -= 9.0 //Your velocity will fall my 9 until you reach the ground
-         if self.hero.position.y < 0 //When he falls below 0
-         {
-            self.hero.position.y = self.heroBaseline  + hero.size.height//he is moved back
-            self.onGround = true //He is on the ground
             
-        }
+        
         
     }
     
     override func update(currentTime: NSTimeInterval) { //Like the Timer from c#
         
         self.debug.text = "Hero.Y = " + (hero.position.y).description + "  " + (hero.position.x).description + "  " + onGround.description
-       
+        
         
         //------>  Resets the moving bar.
         if self.runningBar.position.x <= maxBarX
         {
             self.runningBar.position.x = self.origRunningBarPositionX
-        }
-        
-        // ----> Continously checks to see if he has fallen below
-        if self.hero.position.y < heroBaseline     //if it has fallen below the baseline
-        {
-            hero.position.y = self.heroBaseline  + hero.size.height //he is forced on the baseline
-            velocityY = 0 //resets the velocity
-            self.onGround = true //on the ground
             
         }
-
-        //----->jumping
-        if self.onGround == false
+        if onGround == true
         {
-            self.hero.position.y -= velocityY
-            
-            
+            velocityY = 0
         }
         else
         {
-          hero.position.y = self.runningBar.size.height + hero.size.height
-          self.hero.position.y = self.heroBaseline
-          velocityY = 0.0
-
+            
+            if hero.position.y < heroBaseline
+            {
+                onGround = true
+                hero.position.y = heroBaseline
+            }
+            else
+            {
+                hero.position.y -= velocityY
+                
+            }
         }
+        
+       
         //sets the degree of rotation
         var degreeRotation = CDouble(self.groundSpeed) * M_PI / 180
         //rotate the hero
