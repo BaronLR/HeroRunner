@@ -1,121 +1,124 @@
 import SpriteKit
 
-class PlayScene: SKScene, SKPhysicsContactDelegate {
+class PlayScene: SKScene, SKPhysicsContactDelegate
+{
     
+    //---->Let Statements
     let runningBar = SKSpriteNode(imageNamed:"bar")
     let hero = SKSpriteNode(imageNamed:"hero")
     let block1 = SKSpriteNode(imageNamed:"block1")
     let block2 = SKSpriteNode(imageNamed:"block2")
     let scoreText = SKLabelNode()
     let debug = SKLabelNode()
+    
+    //---->Floats
     var origRunningBarPositionX = CGFloat(0)
+    var origBlockPositionX = CGFloat(0)
     var maxBarX = CGFloat(0)
-    var groundSpeed = 5
     var heroBaseline = CGFloat(0)
-    var onGround = true
     var velocityY = CGFloat(0)
     let gravity = CGFloat(0.6)
-    var Falling = false
     var blockMaxX = CGFloat(0)
-
+    
+    //---->Other
+    var groundSpeed = 0.0
+    var onGround = true
+    var Falling = false
+    var distanceTrav = 0
     var score = 0
- 
     
     override func didMoveToView(view: SKView)
     {
-        
-        self.backgroundColor = UIColor(hex: 0x80D9FF)
-        //This uses 'Apples' physics ... Wonderful
+        //---->Important
+        self.backgroundColor = UIColor(hex: 0x64B5F6)
         self.physicsWorld.contactDelegate = self
         
-        //This Changes The point on the running bar at which we reference
-        self.runningBar.anchorPoint = CGPointMake(0, 0.5)// Now it's the middle left
-        
-        //Sets the running bars position to the bar at the bottom
+        //---->Running Bar
+        self.runningBar.anchorPoint = CGPointMake(0, 0.5)
         self.runningBar.position = CGPointMake(
             CGRectGetMinX(self.frame),
             CGRectGetMinY(self.frame) + (self.runningBar.size.height / 2))
-        
-        
-        //Sets the origonal X for the runningbar
         self.origRunningBarPositionX = self.runningBar.position.x
-        
-        //This sets the bars maximum position before resetting
         self.maxBarX = self.runningBar.size.width - self.frame.size.width
         self.maxBarX *= -1
         
-        //This sets the reset position for the hero. The ground level.
+        //---->Hero
         self.heroBaseline = self.runningBar.position.y + (self.runningBar.size.height)/2
+        self.hero.position = CGPointMake((CGRectGetMinX(self.frame) + runningBar.size.height), heroBaseline)
+        self.hero.size.height = 70
+        self.hero.size.width = 70
         
-        //self.hero.position = CGPointMake(10,10)
-       self.hero.position = CGPointMake((CGRectGetMinX(self.frame) + runningBar.size.height), heroBaseline)
-        
-        //Got this code online :/ , Should make the hero a "Phsycal Body" for interaction with blocks later
-       // self.hero.physicsBody = SKPhysicsBody(circleOfRadius: CGFloat(self.hero.size.width / 2))
-        
-        //Debug settings
+        //---->Debug
         self.debug.fontSize = 18
         self.debug.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame) + 200)
-        //Text Properties <--- Used for Scores
+   
+        //---->Block1,Block2
+        self.block1.position = CGPointMake(CGRectGetMaxX(self.frame) + self.block1.size.width, self.heroBaseline)
+        self.block2.position = CGPointMake(CGRectGetMaxX(self.frame) + self.block2.size.width, self.heroBaseline + (self.block1.size.height / 2))
+        self.block1.physicsBody = SKPhysicsBody(rectangleOfSize: self.block1.size)
+        self.block2.physicsBody = SKPhysicsBody(rectangleOfSize: self.block1.size)
+        self.origBlockPositionX = self.block1.position.x //This Should be the Same for all of the blocks that are added
+        self.blockMaxX = 0 - self.block1.size.width / 2
+
+        //---->Score Sysytem
+        self.scoreText.text = "0"
+        self.scoreText.fontSize = 42
+        self.scoreText.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame))
         self.scoreText.text = "0"
         self.scoreText.fontSize = 42
         self.scoreText.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame))
         
-        //Hero Properties
-        self.hero.size.height = 50
-        self.hero.size.width = 50
-        
-        //This Adds all of the objects to the form
+        //---->Adding To Form
         self.addChild(self.debug)
         self.addChild(self.runningBar)
         self.addChild(self.hero)
         self.addChild(self.scoreText)
+        self.addChild(self.block1)
+        self.addChild(self.block2)
         
     }
 
     
     override func touchesBegan(touches: NSSet, withEvent event: UIEvent)
     {
- //----> An Override Function the checks when you touch the screen. When you do, it makes the velocity 
- //----> get higher and sets it so you are no longer on the ground
-     velocityY = -6.0
-     onGround = false
-    
-        
+        velocityY = velocityY - 9
+        onGround = false
     }
     
-    override func touchesEnded(touches: NSSet, withEvent event: UIEvent) {
-        //----> When you stop touching... You start falling
-      velocityY = 5
-   
-         // self.onGround = false //Your velocity will fall my 9 until you reach the ground
-       
-          //  self.hero.position.y = self.heroBaseline  + hero.size.height//he is moved back
-        
-            
-        
-        
+    override func touchesEnded(touches: NSSet, withEvent event: UIEvent)
+    {
+      velocityY = 9/gravity
     }
     
-    override func update(currentTime: NSTimeInterval) { //Like the Timer from c#
-        
+    override func update(currentTime: NSTimeInterval)
+    {
+        //---->Debugging
         self.debug.text = "Hero.Y = " + (hero.position.y).description + "  " + (hero.position.x).description + "  " + onGround.description
         
         
-        //------>  Resets the moving bar.
+        //---->The Father You Go. The Faster You Roll :P
+        distanceTrav++
+        if distanceTrav % 2 ==  0
+        {
+            groundSpeed = (5.0 + (groundSpeed/10.0))
+        }
+        self.gravity == (1 * (hero.position.y / 10))
+        
+        
+        //------>Moving The Bar (On Reset)
         if self.runningBar.position.x <= maxBarX
         {
             self.runningBar.position.x = self.origRunningBarPositionX
             
         }
+        
+        //----> Jumping
         if onGround == true
         {
             velocityY = 0
         }
         else
         {
-            //WOK
-            
             if hero.position.y < heroBaseline
             {
                 onGround = true
@@ -128,12 +131,9 @@ class PlayScene: SKScene, SKPhysicsContactDelegate {
             }
         }
         
-       
-        //sets the degree of rotation
         var degreeRotation = CDouble(self.groundSpeed) * M_PI / 180
-        //rotate the hero
         self.hero.zRotation -= CGFloat(degreeRotation)
-        //move the ground
         runningBar.position.x -= CGFloat(self.groundSpeed)
-            }
-        }
+        
+    }
+}

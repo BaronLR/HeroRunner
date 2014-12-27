@@ -423,6 +423,7 @@
 				4F8E1F231A4BA1FF006F7310 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		4F8E1F241A4BA1FF006F7310 /* Build configuration list for PBXNativeTarget "HeroRunnerTests" */ = {
 			isa = XCConfigurationList;
@@ -431,6 +432,7 @@
 				4F8E1F261A4BA1FF006F7310 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
