@@ -18,7 +18,7 @@ class PlayScene: SKScene, SKPhysicsContactDelegate
     var heroBaseline = CGFloat(0)
     var velocityY = CGFloat(0)
     let gravity = CGFloat(0.6)
-    var blockMaxX = CGFloat(0)
+
     
     //---->Other
     var groundSpeed = 0.0
@@ -27,8 +27,27 @@ class PlayScene: SKScene, SKPhysicsContactDelegate
     var distanceTrav = 0
     var score = 0
     
+    //--->Blocks
+    var numOfBlocks = 0
+    var blocksOnScreen = 0;
+    var BlockMaxX: Array<CGFloat> = []
+
+    
+    
+    
+
+    
     override func didMoveToView(view: SKView)
     {
+        //--->BlockSetup
+        block1.position.x = CGFloat(CGRectGetMaxX(self.frame) + block1.size.width)
+        block2.position.x = CGFloat(CGRectGetMaxX(self.frame) + block2.size.width)
+      //  self.blockMaxX = 0 - self.block1.size.width / 2
+        
+        
+        
+        
+        
         //---->Important
         self.backgroundColor = UIColor(hex: 0x64B5F6)
         self.physicsWorld.contactDelegate = self
@@ -57,8 +76,8 @@ class PlayScene: SKScene, SKPhysicsContactDelegate
         self.block2.position = CGPointMake(CGRectGetMaxX(self.frame) + self.block2.size.width, self.heroBaseline + (self.block1.size.height / 2))
         self.block1.physicsBody = SKPhysicsBody(rectangleOfSize: self.block1.size)
         self.block2.physicsBody = SKPhysicsBody(rectangleOfSize: self.block1.size)
-        self.origBlockPositionX = self.block1.position.x //This Should be the Same for all of the blocks that are added
-        self.blockMaxX = 0 - self.block1.size.width / 2
+        //This Should be the Same for all of the blocks that are added
+        
 
         //---->Score Sysytem
         self.scoreText.text = "0"
@@ -130,6 +149,8 @@ class PlayScene: SKScene, SKPhysicsContactDelegate
                 
             }
         }
+        //---->BlocksMovemement/SPAWNNING
+        
         
         var degreeRotation = CDouble(self.groundSpeed) * M_PI / 180
         self.hero.zRotation -= CGFloat(degreeRotation)
