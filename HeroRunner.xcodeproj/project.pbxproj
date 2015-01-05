@@ -17,6 +17,7 @@
 		4F8E1F1E1A4BA1FF006F7310 /* HeroRunnerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F8E1F1D1A4BA1FF006F7310 /* HeroRunnerTests.swift */; };
 		4F8E1F281A4BA67E006F7310 /* UIColorExtention.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F8E1F271A4BA67E006F7310 /* UIColorExtention.swift */; };
 		4F8E1F2A1A4BA907006F7310 /* PlayScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F8E1F291A4BA907006F7310 /* PlayScene.swift */; };
+		4FBCD82A1A5A08980029A2DC /* BlockStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FBCD8291A5A08980029A2DC /* BlockStatus.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -44,6 +45,7 @@
 		4F8E1F1D1A4BA1FF006F7310 /* HeroRunnerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeroRunnerTests.swift; sourceTree = "<group>"; };
 		4F8E1F271A4BA67E006F7310 /* UIColorExtention.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIColorExtention.swift; sourceTree = "<group>"; };
 		4F8E1F291A4BA907006F7310 /* PlayScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlayScene.swift; sourceTree = "<group>"; };
+		4FBCD8291A5A08980029A2DC /* BlockStatus.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BlockStatus.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -95,6 +97,7 @@
 				4F8E1F011A4BA1FF006F7310 /* Supporting Files */,
 				4F8E1F271A4BA67E006F7310 /* UIColorExtention.swift */,
 				4F8E1F291A4BA907006F7310 /* PlayScene.swift */,
+				4FBCD8291A5A08980029A2DC /* BlockStatus.swift */,
 			);
 			path = HeroRunner;
 			sourceTree = "<group>";
@@ -226,6 +229,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				4F8E1F281A4BA67E006F7310 /* UIColorExtention.swift in Sources */,
+				4FBCD82A1A5A08980029A2DC /* BlockStatus.swift in Sources */,
 				4F8E1F2A1A4BA907006F7310 /* PlayScene.swift in Sources */,
 				4F8E1F081A4BA1FF006F7310 /* GameScene.swift in Sources */,
 				4F8E1F0A1A4BA1FF006F7310 /* GameViewController.swift in Sources */,
