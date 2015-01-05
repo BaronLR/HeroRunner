@@ -22,20 +22,29 @@ class PlayScene: SKScene, SKPhysicsContactDelegate
     var score = 0
     var blockMaxX = CGFloat(0)
     var origBlockPositionX = CGFloat(0)
+    var Lives:UInt32 = 3
+    
+    enum Collider:UInt32 {
+        case hero = 1
+        case block = 2
+    }
     
     override func didMoveToView(view: SKView) {
    
         self.backgroundColor = UIColor(hex: 0x64B5F6)
-        self.physicsWorld.contactDelegate = self
-        self.block1.position = CGPointMake(CGRectGetMaxX(self.frame) + block1.size.width, self.heroBaseline + (self.block1.size.height))
-        self.block2.position = CGPointMake(CGRectGetMaxX(self.frame) + block2.size.width, self.heroBaseline + (self.block2.size.height))
-        block1.size.width = 200
-        block1.size.height = 200
-        block2.size.height = 200
-        block2.size.width = 200
+        self.physicsWorld.contactDelegate = self //allows reponse from collison detection
         
-        self.addChild(self.block1)
-        self.addChild(self.block2)
+        self.block1.position = CGPointMake(CGRectGetMaxX(self.frame) + block1.size.width, self.heroBaseline + (self.block1.size.height/2))
+        self.block2.position = CGPointMake(CGRectGetMaxX(self.frame) + block2.size.width, self.heroBaseline + (self.block2.size.height/2))
+        block1.size.width = 75
+        block1.size.height = 100
+        block2.size.height = 200
+        block2.size.width = 50
+        
+        //static = no move, dynamic = can move
+        
+        
+       
         self.block1.name = "block1"
         self.block2.name = "block2"
         
@@ -55,22 +64,48 @@ class PlayScene: SKScene, SKPhysicsContactDelegate
         self.hero.position = CGPointMake((CGRectGetMinX(self.frame) + runningBar.size.height), heroBaseline)
         self.hero.size.height = 70
         self.hero.size.width = 70
-        self.debug.fontSize = 18
-        self.debug.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame) + 200)
-        self.runningBar.physicsBody = SKPhysicsBody(rectangleOfSize: self.runningBar.size)
-        self.runningBar.physicsBody?.dynamic = false
+        
+        
+        self.debug.fontSize = 30
+        self.debug.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame) + 100)
+        self.debug.fontColor = UIColor(hex: 0xFFFF00)
+        
+        
+            //self.runningBar.physicsBody = SKPhysicsBody(rectangleOfSize: self.runningBar.size)
+            //self.runningBar.physicsBody?.dynamic = false
         self.block1.physicsBody?.dynamic = false //It doesn't move on it's own//doesn't partake in phsyics
         self.hero.physicsBody?.dynamic = true
+        
         self.scoreText.text = "0"
-        self.scoreText.fontSize = 42
-        self.scoreText.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame))
-        self.scoreText.text = "0"
-        self.scoreText.fontSize = 42
-        self.scoreText.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame))
-     //self.addChild(self.debug)
+        self.scoreText.fontSize = 30
+        self.scoreText.fontColor = UIColor(hex: 0xFF0000)
+        self.scoreText.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame) + 20)
+
+        
+        self.hero.physicsBody = SKPhysicsBody(circleOfRadius: CGFloat(hero.size.width / 2))
+        self.hero.physicsBody?.affectedByGravity = false //I made my own :/
+        self.hero.physicsBody?.categoryBitMask = Collider.hero.rawValue
+        self.hero.physicsBody?.contactTestBitMask = Collider.block.rawValue //What it can collide
+        self.hero.physicsBody?.collisionBitMask = Collider.block.rawValue
+        
+        self.block1.physicsBody = SKPhysicsBody(rectangleOfSize: self.block1.size)
+        self.block1.physicsBody?.dynamic = false //ITS A WALLLL
+        self.block1.physicsBody?.categoryBitMask = Collider.block.rawValue
+        self.block1.physicsBody?.contactTestBitMask = Collider.hero.rawValue //TESTS Collides with hero
+        self.block1.physicsBody?.collisionBitMask = Collider.hero.rawValue
+        
+        self.block2.physicsBody = SKPhysicsBody(rectangleOfSize: self.block2.size)
+        self.block2.physicsBody?.dynamic = false //ITS A WALLLL
+        self.block2.physicsBody?.categoryBitMask = Collider.block.rawValue
+        self.block2.physicsBody?.contactTestBitMask = Collider.hero.rawValue //TESTS Collides with hero
+        self.block2.physicsBody?.collisionBitMask = Collider.hero.rawValue
+        
+        self.addChild(self.block1)
+        self.addChild(self.block2)
         self.addChild(self.runningBar)
         self.addChild(self.hero)
         self.addChild(self.scoreText)
+        self.addChild(self.debug)
     }
     
     func random() -> UInt32
@@ -99,7 +134,9 @@ class PlayScene: SKScene, SKPhysicsContactDelegate
     
     override func update(currentTime: NSTimeInterval)
     {
-       
+         self.scoreText.text =  " Lives:  " + Lives.description
+        
+         self.debug.text =  "Score: " + String(self.score)
         velocityY += gravity
         hero.position.y -= velocityY
         
@@ -111,7 +148,7 @@ class PlayScene: SKScene, SKPhysicsContactDelegate
         }
         
         //---->Debugging
-        self.debug.text = block1.position.x.description + "  " + block1.position.y.description
+       // self.debug.text = block1.position.x.description + "  " + block1.position.y.description
         
         
         //---->The Father You Go. The Faster You Roll :P
@@ -132,12 +169,34 @@ class PlayScene: SKScene, SKPhysicsContactDelegate
        // block1.position.x -=  CGFloat(self.groundSpeed)
        
     }
+     func didBeginContact(contact: SKPhysicsContact)
+    {
+        Lives--
+        if Lives == 0
+        {
+            died()
+        }
+    }
     
+    func died()
+    {
+        if let scene = GameScene.unarchiveFromFile("GameScene") as? GameScene
+        {
+          let skView = self.view as SKView!
+          skView.ignoresSiblingOrder = true
+          scene.size = skView.bounds.size
+          scene.scaleMode = .AspectFill
+          skView.presentScene(scene)
+          
+        }
+        
+    }
     func blockRunner()
     {
         for (block, blockStatuses) in self.blockStatuses
         {
             var thisBlock = self.childNodeWithName(block)
+            thisBlock?.position.y = heroBaseline + (blockStatuses.thisBlockSizeHeight/2)
             
             if blockStatuses.shouldRunBlock()
             {
@@ -149,7 +208,7 @@ class PlayScene: SKScene, SKPhysicsContactDelegate
         
             if blockStatuses.isRunning == true
             {
-                thisBlock?.position.y = runningBar.size.height + blockStatuses.thisBlockSizeHeight
+                
                 if thisBlock?.position.x > blockMaxX
                 {
                     thisBlock?.position.x -= self.groundSpeed
@@ -159,9 +218,13 @@ class PlayScene: SKScene, SKPhysicsContactDelegate
                     thisBlock?.position.x = self.origBlockPositionX
                     thisBlock?.position.y = self.runningBar.size.height
                     blockStatuses.isRunning = false
-                   // self.score.hashValue ++
-                
-                  //self.scoreText.text = String(self.score)
+                   
+                  score++
+                   
+                    if score % 5 == 0
+                    {
+                        groundSpeed++
+                    }
                 }
              }
             if blockStatuses.isRunning == false
